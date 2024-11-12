@@ -25,6 +25,8 @@ function updateTimer() {
 
 // Function to check the status and update the UI
 function checkStatus(modelId) {
+
+    visualizeButton.disabled = false;
     fetch(`/models/${modelId}/status`)
         .then(response => response.json())
         .then(data => {
@@ -34,7 +36,7 @@ function checkStatus(modelId) {
 
             if (status === 'running') {
                 statusElement.innerText = 'Status: Running...';
-                visualizeButton.disabled = true;
+                // visualizeButton.disabled = true;
                 if (!timerInterval) {
                     startTimer();
                 }
@@ -44,11 +46,11 @@ function checkStatus(modelId) {
                 stopTimer();
             } else if (status === 'error') {
                 statusElement.innerText = 'Status: Error Occurred';
-                visualizeButton.disabled = true;
+                // visualizeButton.disabled = true;
                 stopTimer();
             } else {
                 statusElement.innerText = 'Status: Not Started';
-                visualizeButton.disabled = true;
+                // visualizeButton.disabled = true;
                 stopTimer();
             }
         });

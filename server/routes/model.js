@@ -4,8 +4,7 @@ const path = require('path');
 const router = express.Router();
 const { exec } = require('child_process');
 const { ensurePremiumOrAdmin } = require('../auth'); // Import premium middleware
-
-let modelStatus = {};
+const executeRoutes = require('./execute');
 
 // Base path to the EFS-mounted `ml-models` directory
 const EFS_BASE_PATH = path.join(__dirname, '../../efs/ml-models');
@@ -105,44 +104,8 @@ router.get('/:modelId', ensurePremiumOrAdmin, (req, res) => {
   }
 });
 
-// Premium-protected route to execute model script
-router.post('/:modelId/execute', ensurePremiumOrAdmin, (req, res) => {
-  const modelId = req.params.modelId;
-  const scriptName = req.body.script;
+// Other Routes
+router.use('/', executeRoutes);
 
-  if (!scriptName) {
-    console.error('Error: Script name is undefined.');
-    return res.status(400).json({ error: 'Script name is required.' });
-  }
-
-  const scriptPath = path.join(EFS_BASE_PATH, modelId, scriptName);
-  const pythonPath = path.join(EFS_BASE_PATH, 'venv/bin/python3');
-
-  // Set status to 'running'
-  modelStatus[modelId] = 'running';
-
-  if (fs.existsSync(scriptPath)) {
-    exec(`${pythonPath} ${scriptPath}`, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing script: ${stderr}`);
-        modelStatus[modelId] = 'error';
-        return res.status(500).json({ error: 'Error executing script', details: stderr });
-      }
-      console.log(`Script output: ${stdout}`);
-      modelStatus[modelId] = 'finished';
-      res.redirect(`/models/${modelId}`);
-    });
-  } else {
-    modelStatus[modelId] = 'not found';
-    res.status(404).json({ error: 'Script not found' });
-  }
-});
-
-// Premium-protected route to check model execution status
-router.get('/:modelId/status', ensurePremiumOrAdmin, (req, res) => {
-  const modelId = req.params.modelId;
-  const status = modelStatus[modelId] || 'not started';
-  res.json({ status });
-});
 
 module.exports = router;
