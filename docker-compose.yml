@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  traintrack_model_service:
+    build: .
+    container_name: traintrack_model_service
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - SESSION_SECRET=${SESSION_SECRET}      - JWT_SECRET=${JWT_SECRET}
+      - EFS_BASE_PATH=/efs/ml-models
+    volumes:
+      - .:/usr/src/app  # Mount the current directory for code updates
+      - /efs/ml-models:/efs/
+    depends_on: []

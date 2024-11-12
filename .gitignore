@@ -1,0 +1,6 @@
+# Ignore everything in the EFS directory except the Client folder
+efs/*
+!efs/Client/
+
+# Ignore node_modules in all directories
+node_modules/

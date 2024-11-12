@@ -1,0 +1,24 @@
+# Ignore local dependencies
+node_modules
+.venv
+venv
+
+# Ignore Docker files (if not needed in the image)
+docker-compose.yml
+Dockerfile
+
+# Ignore logs, temporary files, and other unnecessary files
+npm-debug.log
+*.log
+*.tmp
+*.swp
+*.bak
+
+# Ignore Git metadata and Docker ignore
+.git
+.gitignore
+.dockerignore
+
+# Ignore OS-generated files and editor backups
+.DS_Store
+Thumbs.db
